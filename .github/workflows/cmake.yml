@@ -22,12 +22,15 @@ jobs:
           - cc: clang-17
             cxx: clang++-17
             runtime: libc++
+            linker: LLD
           - cc: clang-18
             cxx: clang++-18
             runtime: libc++
+            linker: LLD
           - cc: clang-19
             cxx: clang++-19
             runtime: libc++
+            linker: LLD
             # clang + libstdc++ (compatibility)
           - cc: clang-17
             cxx: clang++-17
@@ -40,7 +43,7 @@ jobs:
 
     - run: |
         sudo apt-get update
-        sudo apt-get install -y xorg-dev ${{matrix.config.cc}} libc++1 libc++-dev libc++abi1
+        sudo apt-get install -y xorg-dev ${{matrix.config.cc}} libc++1 libc++-dev libc++abi1 lld
 
     - name: Setup Vulkan SDK
       uses: kociap/setup-vulkan-sdk@v1.0
@@ -56,6 +59,7 @@ jobs:
           -DCMAKE_CXX_COMPILER=${{matrix.config.cxx}} \
           -DCMAKE_C_COMPILER=${{matrix.config.cc}} \
           ${{matrix.config.runtime && format('-DCMAKE_CXX_FLAGS=-stdlib={0}', matrix.config.runtime) || ''}} \
+          ${{matrix.config.linker && format('-DCMAKE_LINKER_TYPE={0}', matrix.config.linker) || ''}} \
           -DVUK_BUILD_EXAMPLES=ON \
           -DVUK_USE_DXC=OFF
 
