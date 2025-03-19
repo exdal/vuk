@@ -55,6 +55,15 @@ jobs:
   windows-build:
     runs-on: windows-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - cc: cl
+            cxx: cl
+          - cc: clang-cl
+            cxx: clang-cl
+
     steps:
     - uses: actions/checkout@v4
       with:
@@ -72,6 +81,8 @@ jobs:
         cmake -B ${{github.workspace}}/build `
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} `
           -DVUK_BUILD_EXAMPLES=ON `
+          -DCMAKE_CXX_COMPILER=${{matrix.config.cxx}} `
+          -DCMAKE_C_COMPILER=${{matrix.config.cc}} `
           -DVUK_USE_DXC=OFF
 
     - name: Build
