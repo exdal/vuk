@@ -13,12 +13,14 @@ jobs:
       fail-fast: false
       matrix:
         config:
+            # GCC + libstdc++
           - cc: gcc-13
             cxx: g++-13
-            runtime: stdc++
+            runtime: libstdc++
           - cc: gcc-14
             cxx: g++-14
-            runtime: stdc++
+            runtime: libstdc++
+            # clang + libcxx
           - cc: clang-17
             cxx: clang++-17
             runtime: libc++
@@ -28,6 +30,10 @@ jobs:
           - cc: clang-19
             cxx: clang++-19
             runtime: libc++
+            # clang + libstdc++ (compatibility)
+          - cc: clang-17
+            cxx: clang++-17
+            runtime: libstdc++
 
     steps:
     - uses: actions/checkout@v4
@@ -52,7 +58,6 @@ jobs:
           -DCMAKE_CXX_COMPILER=${{matrix.config.cxx}} \
           -DCMAKE_C_COMPILER=${{matrix.config.cc}} \
           -DCMAKE_CXX_FLAGS=-stdlib=${{matrix.config.runtime}} \
-          -DCMAKE_EXE_LINKER_FLAGS=-stdlib=${{matrix.config.runtime}} \
           -DVUK_BUILD_EXAMPLES=ON \
           -DVUK_USE_DXC=OFF
 
